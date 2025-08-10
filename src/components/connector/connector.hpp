@@ -1,0 +1,4 @@
+class Connector {
+	Connector();
+	~Connector();
+};

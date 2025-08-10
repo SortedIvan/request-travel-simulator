@@ -1,0 +1,4 @@
+class Loadbalancer {
+	Loadbalancer();
+	~Loadbalancer();
+};

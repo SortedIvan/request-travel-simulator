@@ -1,0 +1,4 @@
+class Request {
+	Request();
+	~Request();
+};

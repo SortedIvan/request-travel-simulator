@@ -139,6 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\components\client\client.cpp" />
+    <ClCompile Include="src\components\connector\connector.cpp" />
+    <ClCompile Include="src\components\loadbalancer\loadbalancer.cpp" />
+    <ClCompile Include="src\components\manager\manager.cpp" />
+    <ClCompile Include="src\components\request\request.cpp" />
+    <ClCompile Include="src\components\server\server.cpp" />
+    <ClCompile Include="src\editor\editor.cpp" />
     <ClCompile Include="src\generic_drawables\dashed_line.cpp" />
     <ClCompile Include="src\generic_drawables\line.cpp" />
     <ClCompile Include="src\generic_drawables\point.cpp" />
@@ -150,6 +157,13 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\components\client\client.hpp" />
+    <ClInclude Include="src\components\connector\connector.hpp" />
+    <ClInclude Include="src\components\loadbalancer\loadbalancer.hpp" />
+    <ClInclude Include="src\components\manager\manager.hpp" />
+    <ClInclude Include="src\components\request\request.hpp" />
+    <ClInclude Include="src\components\server\server.hpp" />
+    <ClInclude Include="src\editor\editor.hpp" />
     <ClInclude Include="src\generic_drawables\dashed_line.hpp" />
     <ClInclude Include="src\generic_drawables\line.hpp" />
     <ClInclude Include="src\generic_drawables\point.hpp" />
