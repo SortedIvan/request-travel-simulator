@@ -1,4 +1,10 @@
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 #include "SFML/Graphics.hpp"
+#include "SFML/System.hpp"
+#include "SFML/Window.hpp"
+
 #include "editor/editor.hpp"
 
 int main() {

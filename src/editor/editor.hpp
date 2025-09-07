@@ -8,6 +8,8 @@ class Editor {
 private:
 	sf::RenderWindow window;
 	sf::Event e;
+	sf::Clock deltaTimeClock;
+	sf::Time deltaTime;
 public:
 	void run();
 	Editor(sf::Vector2i screenSize, std::string applicationName);
