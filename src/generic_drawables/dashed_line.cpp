@@ -46,6 +46,10 @@ void DashedLine::draw(sf::RenderWindow& window) {
 	}
 }
 
+std::vector<Line> DashedLine::getLines() {
+	return lines;
+}
+
 DashedLine::DashedLine() {
 
 }

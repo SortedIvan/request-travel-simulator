@@ -14,4 +14,5 @@ public:
 	DashedLine(sf::Vector2f pointA, sf::Vector2f pointB, float linesLength, sf::Color lineColor);
 	DashedLine();
 	void draw(sf::RenderWindow& window);
+	std::vector<Line> getLines();
 };

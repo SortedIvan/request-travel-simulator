@@ -1,4 +1,7 @@
+#include <vector>
+#include <unordered_map>
 #include "../src/generic_drawables/point.hpp"
+#include "../src/game/requests/request.hpp"
 
 enum NodeType {
 	PRODUCER,
@@ -9,11 +12,20 @@ enum NodeType {
 
 class Node {
 private:
-	Point* nodeShape; // for now, all nodes will be a simple point
+	Point nodeShape; // for now, all nodes will be a simple point
 	NodeType nodeType;
-	bool hasRequest = false; // true if there is an active request on it
-	
-
+	std::unique_ptr<Request> request;
+	int requestsProcessed = 0;
+	bool isActive = true;
+	std::vector<Connective> nodeConnections;
 public:
-	virtual Node();
+	~Node();
+	Node();
+	void draw(sf::RenderWindow& window);
+	bool hasRequest();
+	void setRequest(std::unique_ptr<Request> request);
+	sf::Vector2f getNodePosition();
+	Point getNodeShape();
+
+	virtual void processRequest();
 };

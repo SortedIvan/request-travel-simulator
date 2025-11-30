@@ -29,3 +29,7 @@ void Line::setColor(sf::Color color) {
 	points[0].color = color;
 	points[1].color = color;
 }
+
+sf::VertexArray Line::getLinePoints() {
+	return points;
+}

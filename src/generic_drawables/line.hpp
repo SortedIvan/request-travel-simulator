@@ -11,4 +11,5 @@ public:
 	void setNewPoints(sf::Vector2f pointA, sf::Vector2f pointB);
 	void move(sf::Vector2f moveBy);
 	void setColor(sf::Color color);
+	sf::VertexArray getLinePoints();
 };
