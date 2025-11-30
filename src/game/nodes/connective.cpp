@@ -1,11 +1,41 @@
 #include "../src/math_utils/vec_math.hpp"
 #include "./connective.hpp"
+#include "../src/generic_drawables/point.hpp"
+#include "node.hpp"
 
 Connective::Connective(Node* nodeFrom, Node* nodeTo, const sf::Color connectiveColor) {
 	this->nodeFrom = nodeFrom;
 	this->nodeTo = nodeTo;
 	this->connectiveColor = connectiveColor;
 	initializeConnectiveDrawable();
+}
+
+Connective::Connective(const sf::Vector2f positionFrom, const sf::Vector2f positionTo, const sf::Color connectiveColor) {
+	this->connectiveColor = connectiveColor;
+	initializeConnectiveDrawableDummy(positionFrom, positionTo);
+}
+
+void Connective::initializeConnectiveDrawableDummy(sf::Vector2f from, sf::Vector2f to) {
+	sf::Vector2f displacementFromTo = to - from;
+	sf::Vector2f directionVector = VecMath::normalize(displacementFromTo);
+	sf::Vector2f startPoint  = from + directionVector * 30.f;
+	sf::Vector2f endPoint = to + VecMath::inverse(directionVector) * 30.f;
+
+	connectiveLine = DashedLine(startPoint, endPoint, 5.f, connectiveColor);
+
+	sf::ConvexShape triangle;
+	triangle.setPointCount(3);
+
+	sf::Vector2f triangleBottomLeft = VecMath::applyRotation(50.f, VecMath::inverse(directionVector)) * connectiveEndSideLength + endPoint;
+	sf::Vector2f triangleBottomRight = VecMath::applyRotation(-50.f, VecMath::inverse(directionVector)) * connectiveEndSideLength + endPoint;
+
+	triangle.setPoint(0, endPoint); // top
+	triangle.setPoint(1, triangleBottomLeft);
+	triangle.setPoint(2, triangleBottomRight);
+
+	triangle.setFillColor(connectiveColor);
+
+	this->connectiveEnd = triangle;
 }
 
 Connective::~Connective() {};
@@ -53,16 +83,14 @@ void Connective::initializeConnectiveDrawable() {
 	sf::ConvexShape triangle;
 	triangle.setPointCount(3); 
 
-	sf::Vector2f triangleBottomLeft = VecMath::applyRotation(45.f, VecMath::inverse(directionVector)) * connectiveEndSideLength + endPoint;
-	sf::Vector2f triangleBottomRight = VecMath::applyRotation(-45.f, VecMath::inverse(directionVector)) * connectiveEndSideLength + endPoint;
+	sf::Vector2f triangleBottomLeft = VecMath::applyRotation(50.f, VecMath::inverse(directionVector)) * connectiveEndSideLength + endPoint;
+	sf::Vector2f triangleBottomRight = VecMath::applyRotation(-50.f, VecMath::inverse(directionVector)) * connectiveEndSideLength + endPoint;
 
 	triangle.setPoint(0, endPoint); // top
 	triangle.setPoint(1, triangleBottomLeft); 
 	triangle.setPoint(2, triangleBottomRight);
 
 	triangle.setFillColor(connectiveColor);
-	triangle.setOutlineColor(sf::Color::Black);
-	triangle.setOutlineThickness(2.f);
 
 	this->connectiveEnd = triangle;
 }

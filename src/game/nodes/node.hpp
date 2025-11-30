@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include "../src/generic_drawables/point.hpp"
 #include "../src/game/requests/request.hpp"
+#include "../src/game/nodes/connective.hpp"
 
 enum NodeType {
 	PRODUCER,
@@ -24,8 +25,9 @@ public:
 	void draw(sf::RenderWindow& window);
 	bool hasRequest();
 	void setRequest(std::unique_ptr<Request> request);
-	sf::Vector2f getNodePosition();
 	Point getNodeShape();
 
-	virtual void processRequest();
+	virtual void processRequest() {
+		// default behavior here
+	}
 };
