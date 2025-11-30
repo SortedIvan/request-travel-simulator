@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -24,12 +24,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\components\client\client.cpp" />
-    <ClCompile Include="src\components\connector\connector.cpp" />
-    <ClCompile Include="src\components\loadbalancer\loadbalancer.cpp" />
-    <ClCompile Include="src\components\manager\manager.cpp" />
-    <ClCompile Include="src\components\request\request.cpp" />
-    <ClCompile Include="src\components\server\server.cpp" />
+    <ClCompile Include="src\ecs\manager\ecs_manager.cpp" />
     <ClCompile Include="src\editor\editor.cpp" />
     <ClCompile Include="src\generic_drawables\dashed_line.cpp" />
     <ClCompile Include="src\generic_drawables\line.cpp" />
@@ -146,12 +141,8 @@
     <ClInclude Include="include\SFML\Window\WindowBase.hpp" />
     <ClInclude Include="include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="include\SFML\Window\WindowStyle.hpp" />
-    <ClInclude Include="src\components\client\client.hpp" />
-    <ClInclude Include="src\components\connector\connector.hpp" />
-    <ClInclude Include="src\components\loadbalancer\loadbalancer.hpp" />
-    <ClInclude Include="src\components\manager\manager.hpp" />
-    <ClInclude Include="src\components\request\request.hpp" />
-    <ClInclude Include="src\components\server\server.hpp" />
+    <ClInclude Include="src\ecs\component\components.hpp" />
+    <ClInclude Include="src\ecs\manager\ecs_manager.hpp" />
     <ClInclude Include="src\editor\editor.hpp" />
     <ClInclude Include="src\generic_drawables\dashed_line.hpp" />
     <ClInclude Include="src\generic_drawables\line.hpp" />

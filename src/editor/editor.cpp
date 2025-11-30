@@ -1,20 +1,24 @@
 #include "editor.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include "../generic_drawables/point.hpp"
+#include "../math_utils/generic_math.hpp"
 
 
 Editor::Editor(sf::Vector2i screenSize, std::string applicationName) 
-	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) {
+	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) 
+{
     ImGui::SFML::Init(window);
-
 }
 
 // Destructor
-Editor::~Editor() {
+Editor::~Editor() 
+{
 	
 }
 
-void Editor::run() {
+void Editor::run() 
+{
     while (window.isOpen())
     {
         deltaTime = deltaTimeClock.restart();
@@ -32,8 +36,6 @@ void Editor::run() {
 
             }
         }
-
-
 
         // UPDATE
         ImGui::SFML::Update(window, deltaTime);
