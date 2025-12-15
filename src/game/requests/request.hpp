@@ -6,6 +6,7 @@ private:
 	int stepsAlive = 0;
 	sf::Vector2f position;
 public:
+	Request();
 	Request(const sf::Color color, const int width, const int length, const sf::Vector2f startingPosition);
 	~Request();
 	void incrementStepsAlive();

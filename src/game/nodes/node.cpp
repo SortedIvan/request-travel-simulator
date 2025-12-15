@@ -30,11 +30,16 @@
 //	virtual void processRequest();
 //};
 #include "node.hpp"
-Node::Node() {
-
+Node::Node(NodeType nodeType, int id, int nodeShape) {
+	this->id = id;
+	this->nodeType = nodeType;
 }
 
 Node::~Node() {
+
+}
+
+Node::Node(){
 
 }
 
@@ -56,4 +61,28 @@ void Node::setRequest(std::unique_ptr<Request> request) {
 
 Point Node::getNodeShape() {
 	return this->nodeShape;
+}
+
+void Node::update(float deltaTime) {
+	// default update behavior
+}
+
+void Node::executeNodeBehavior(float deltaTime) {
+	// default node behavior
+}
+
+int Node::getId() {
+	return this->id;
+}
+
+void Node::setId(int newId) {
+	this->id = newId;
+}
+
+void Node::addNodeConnection(Connective connection) {
+	nodeConnections.push_back(connection);
+}
+
+std::vector<Connective>& Node::getNodeConnections() {
+	return this->nodeConnections;
 }

@@ -19,6 +19,7 @@ private:
 	void initializeConnectiveDrawableDummy(sf::Vector2f from, sf::Vector2f to);
 public:
 	~Connective();
+	Connective();
 	Connective(Node* nodeFrom, Node* nodeTo, const sf::Color connectiveColor);
 	Connective(const sf::Vector2f positionFrom, const sf::Vector2f positionTo, const sf::Color connectiveColor);
 	bool isActive();
@@ -27,4 +28,6 @@ public:
 	void move();
 	void incrementRequestsPassedThrough();
 	int getRequestsPassedThrough();
+	std::pair<Node*, Node*> getNodeFromAndTo();
+
 };

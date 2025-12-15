@@ -1,10 +1,18 @@
+
 #include "editor.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "../generic_drawables/point.hpp"
 #include "../math_utils/generic_math.hpp"
 #include "../game/nodes/connective.hpp"
+#include "../game/nodes/node_manager.hpp"
 
+void renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime) {
+    ImGui::SFML::Update(window, deltaTime);
+    ImGui::Begin("Window title");
+    ImGui::Text("Window text!");
+    ImGui::End();
+}
 
 Editor::Editor(sf::Vector2i screenSize, std::string applicationName) 
 	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) 
@@ -20,10 +28,7 @@ Editor::~Editor()
 
 void Editor::run() 
 {
-    std::vector<Connective> connectives;
-    sf::Vector2f from;
-    sf::Vector2f to;
-    bool clicked = false;
+    std::unique_ptr<NodeManager> nodeManager = std::make_unique<NodeManager>();
 
     while (window.isOpen())
     {
@@ -43,37 +48,21 @@ void Editor::run()
             }
 
             if (e.type == sf::Event::MouseButtonReleased) {
-                if (clicked) {
-                    to = (sf::Vector2f)sf::Mouse::getPosition(window);
-                    connectives.emplace_back(from, to, sf::Color::Yellow);
-                    clicked = false;
-                }
-                else {
-                    from = (sf::Vector2f)sf::Mouse::getPosition(window);
-                    clicked = true;
-                }   
             }
         }
 
-        // UPDATE
-        ImGui::SFML::Update(window, deltaTime);
+        // Update
+        renderImguiSfml(window, deltaTime);
 
-        ImGui::Begin("Window title");
-        ImGui::Text("Window text!");
-
-        ImGui::End();
-
-        // Clear the window
+        // Clear window
         window.clear(sf::Color::Black);
 
-        // draw
+        // Draw
         ImGui::SFML::Render(window);
 
-        for (int i = 0; i < connectives.size(); ++i) {
-            connectives[i].draw(window);
-        }
 
-        // display
+
+
         window.display();
     }
 }

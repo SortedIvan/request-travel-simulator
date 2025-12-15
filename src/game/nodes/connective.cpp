@@ -94,3 +94,11 @@ void Connective::initializeConnectiveDrawable() {
 
 	this->connectiveEnd = triangle;
 }
+
+Connective::Connective() {
+
+}
+
+std::pair<Node*, Node*> Connective::getNodeFromAndTo() {
+	return std::make_pair(nodeFrom, nodeTo);
+}
