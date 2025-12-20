@@ -30,9 +30,12 @@
 //	virtual void processRequest();
 //};
 #include "node.hpp"
-Node::Node(NodeType nodeType, int id, int nodeShape) {
+Node::Node(NodeType nodeType, int id, int nodeShapeSize, const sf::Vector2f position, sf::Color nodeColor) {
 	this->id = id;
 	this->nodeType = nodeType;
+	this->nodeShape = Point(
+		position, nodeShapeSize, nodeColor
+	);
 }
 
 Node::~Node() {

@@ -12,6 +12,8 @@ private:
 	sf::Time deltaTime;
 public:
 	void run();
+	void draw();
+	void update();
 	Editor(sf::Vector2i screenSize, std::string applicationName);
 	~Editor();
 };

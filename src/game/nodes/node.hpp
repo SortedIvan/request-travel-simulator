@@ -24,7 +24,8 @@ private:
 public:
 	~Node();
 	Node();
-	Node(NodeType nodeType, int id, int nodeShapeSize);
+	Node(NodeType nodeType, int id, int nodeShapeSize,
+		const sf::Vector2f position, sf::Color nodeColor);
 	void draw(sf::RenderWindow& window);
 	bool hasRequest();
 	void setRequest(std::unique_ptr<Request> request);

@@ -78,7 +78,7 @@ void Connective::initializeConnectiveDrawable() {
 	sf::Vector2f startPoint = nodeFromShape.getPosition() + directionVector * nodeFromShape.getCircleShape().getRadius();
 	sf::Vector2f endPoint = nodeToShape.getPosition() + VecMath::inverse(directionVector) * nodeToShape.getCircleShape().getRadius();
 
-	connectiveLine.initializeLinesArray(startPoint, endPoint);
+	connectiveLine = DashedLine(startPoint, endPoint, 5.f, connectiveColor);
 	
 	sf::ConvexShape triangle;
 	triangle.setPointCount(3); 
