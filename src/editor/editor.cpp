@@ -37,22 +37,24 @@ void Editor::run()
     while (window.isOpen())
     {
         deltaTime = deltaTimeClock.restart();
-        NodeManager* nm = nodeManager.get();
+        NodeManager* nm = nodeManager.get();    
+        const auto& io = ImGui::GetIO(); 
 
         while (window.pollEvent(e))
         {
             ImGui::SFML::ProcessEvent(e);
+
             if (e.type == sf::Event::Closed)
             {
                 window.close();
             }
 
-            if (e.type == sf::Event::TextEntered)
+            if (e.type == sf::Event::TextEntered && !io.WantCaptureKeyboard)
             {
 
             }
 
-            if (e.type == sf::Event::MouseButtonReleased) {
+            if (e.type == sf::Event::MouseButtonReleased && !io.WantCaptureMouse) {
                 const int nodeId = nm->addNode(
                     NodeType::PRODUCER,
                     30.f,
@@ -72,9 +74,11 @@ void Editor::run()
         // Clear window
         window.clear(sf::Color::Black);
 
-        // Draw
-        ImGui::SFML::Render(window);
+        // Draw everything else first
         nm->draw(window);
+        
+        // Finally, draw the UI (always ontop)
+        ImGui::SFML::Render(window);
 
         window.display();
     }

@@ -30,11 +30,11 @@ void NodeManager::update(float deltaTime) {
 	}
 }
 
-const std::vector<Node*>& NodeManager::getNodesView() {
+const std::vector<std::unique_ptr<Node>>& NodeManager::getNodesView() {
 	return this->nodes;
 }
 
-std::vector<Node*>& NodeManager::getNodesModifiable() {
+std::vector<std::unique_ptr<Node>>& NodeManager::getNodesModifiable() {
 	return this->nodes;
 }
 
@@ -50,14 +50,14 @@ int NodeManager::getNodeId() {
 	return id;
 }
 
-void NodeManager::addNode(Node* node) {
+void NodeManager::addNode(std::unique_ptr<Node> node) {
 	int id = getNodeId();
 
 	if (nodes.size() <= id) {
-		nodes.push_back(node);
+		nodes.push_back(std::move(node));
 	}
 	else {
-		nodes[id] = node;
+		nodes[id] = std::move(node);
 	}
 }
 
@@ -65,8 +65,8 @@ int NodeManager::addNode(NodeType nodeType, int nodeShapeSize, const sf::Vector2
 	sf::Color nodeColor = sf::Color::White) {
 	
 	int id = getNodeId();
-	Node* node = new Node(nodeType, id, nodeShapeSize, position, nodeColor);
-	
+	auto node = std::make_unique<Node>(nodeType, id, nodeShapeSize, position, nodeColor);
+
 	if (nodes.size() <= id) {
 		nodes.push_back(std::move(node));
 	}
@@ -102,8 +102,10 @@ void NodeManager::connectTwoNodes(int nodeFrom, int nodeTo) {
 
 	Logger::info(__FILE__,__LINE__, "Attempting to connect node " + std::to_string(nodeFrom) + "to node" + std::to_string(nodeTo));
 
+	// Connective contains std::vector<unique_ptr>> which is NON-COPYABLE
+	// thus, we need to emplace back here directly
 	nodes[nodeFrom]->getNodeConnections().emplace_back(
-		nodes[nodeFrom], nodes[nodeTo], defaultConnectiveColor
+		nodes[nodeFrom].get(), nodes[nodeTo].get(), defaultConnectiveColor
 	);
 
 }

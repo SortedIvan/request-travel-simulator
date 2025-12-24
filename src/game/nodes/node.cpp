@@ -1,34 +1,3 @@
-//#include <vector>
-//#include <unordered_map>
-//#include "../src/generic_drawables/point.hpp"
-//#include "../src/game/requests/request.hpp"
-//#include "../src/game/nodes/connective.hpp"
-//
-//enum NodeType {
-//	PRODUCER,
-//	CONSUMER,
-//	DISTRIBUTOR,
-//	MULTIPLICATOR
-//};
-//
-//class Node {
-//private:
-//	Point nodeShape; // for now, all nodes will be a simple point
-//	NodeType nodeType;
-//	std::unique_ptr<Request> request;
-//	int requestsProcessed = 0;
-//	bool isActive = true;
-//	std::vector<Connective> nodeConnections;
-//public:
-//	~Node();
-//	Node();
-//	void draw(sf::RenderWindow& window);
-//	bool hasRequest();
-//	void setRequest(std::unique_ptr<Request> request);
-//	Point getNodeShape();
-//
-//	virtual void processRequest();
-//};
 #include "node.hpp"
 Node::Node(NodeType nodeType, int id, int nodeShapeSize, const sf::Vector2f position, sf::Color nodeColor) {
 	this->id = id;
@@ -54,12 +23,12 @@ void Node::draw(sf::RenderWindow& window) {
 	}
 }
 
-bool Node::hasRequest() {
-	return request != nullptr;
+bool Node::hasRequests() {
+	return !requests.empty();
 }
 
-void Node::setRequest(std::unique_ptr<Request> request) {
-	this->request = std::move(request);
+void Node::addRequest(std::unique_ptr<Request> request) {
+	this->requests.push_back(std::move(request));
 }
 
 Point Node::getNodeShape() {
@@ -80,10 +49,6 @@ int Node::getId() {
 
 void Node::setId(int newId) {
 	this->id = newId;
-}
-
-void Node::addNodeConnection(Connective connection) {
-	nodeConnections.push_back(connection);
 }
 
 std::vector<Connective>& Node::getNodeConnections() {

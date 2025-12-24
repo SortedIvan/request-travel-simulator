@@ -53,6 +53,10 @@ void Connective::draw(sf::RenderWindow& window) {
 	window.draw(connectiveEnd);
 }
 
+void Connective::update(float deltaTime) {
+	
+}
+
 void Connective::move() {
 	initializeConnectiveDrawable();
 }
@@ -101,4 +105,8 @@ Connective::Connective() {
 
 std::pair<Node*, Node*> Connective::getNodeFromAndTo() {
 	return std::make_pair(nodeFrom, nodeTo);
+}
+
+void Connective::addRequest(std::unique_ptr<Request> request) {
+	this->currentRequests.push_back(std::move(request));
 }

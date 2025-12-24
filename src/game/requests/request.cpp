@@ -14,14 +14,6 @@ Request::Request(const sf::Color color, const int width, const int length, const
 	shape.setFillColor(color);
 }
 
-void Request::incrementStepsAlive() {
-	this->stepsAlive++;
-}
-
-int Request::getStepsAlive() {
-	return stepsAlive;
-}
-
 void Request::move(const sf::Vector2f displacement) {
 	shape.setPosition(shape.getPosition() + displacement);
 }
