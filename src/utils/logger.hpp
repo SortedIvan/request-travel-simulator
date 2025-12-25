@@ -31,8 +31,7 @@ struct Logger final {
 		std::cout << "[ERROR][" << loc << "][" << getFileName(file) << "]" << message << std::endl;
 	}
 
-	static void warn() {
-
+	static void warn(const std::string file = __FILE__, int loc = __LINE__, const std::string message = "Hello world") {
+		std::cout << "[WARN][" << loc << "][" << getFileName(file) << "]" << message << std::endl;
 	}
-
 };

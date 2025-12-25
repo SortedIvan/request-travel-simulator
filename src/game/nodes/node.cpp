@@ -1,20 +1,24 @@
 #include "node.hpp"
 #include "../../utils/logger.hpp"
 
-Node::Node(NodeType nodeType, int id, int nodeShapeSize, 
-	const sf::Vector2f position, sf::Color nodeColor, sf::Font& nodeLabelFont,
+Node::Node(int id, const NodeCreateArgs& nodeCreateArgs, sf::Font& nodeLabelFont,
 	sf::Color& nodeLabelFillColor) {
 	this->id = id;
-	this->nodeType = nodeType;
+	this->nodeType = nodeCreateArgs.nodeType;
 	this->nodeShape = Point(
-		position, nodeShapeSize, nodeColor
+		nodeCreateArgs.position, nodeCreateArgs.nodeShapeSize, nodeCreateArgs.nodeColor
 	);
 
+	const float nodeSelectedShapeSize = nodeCreateArgs.nodeShapeSize - nodeCreateArgs.nodeShapeSize / 10.f;
+
+	this->nodeSelectedShape = Point(
+		nodeCreateArgs.position, nodeSelectedShapeSize, sf::Color::Transparent
+	);
+
+	this->nodeSelectedShape.getCircleShape().setOutlineColor(sf::Color::Black);
+	this->nodeSelectedShape.getCircleShape().setOutlineThickness(2.f);
+
 	setNodeLabel(nodeLabelFont, nodeLabelFillColor);
-}
-
-Node::~Node() {
-
 }
 
 Node::Node(){
@@ -27,6 +31,10 @@ void Node::draw(sf::RenderWindow& window) {
 
 	for (int i = 0; i < nodeConnections.size(); ++i) {
 		nodeConnections[i].draw(window);
+	}
+
+	if (isSelected) {
+		nodeSelectedShape.draw(window);
 	}
 }
 
@@ -82,4 +90,12 @@ void Node::setNodeLabel(sf::Font& nodeLabelFont, const sf::Color& nodeLabelColor
 	);
 
 	this->nodeLabel.setPosition(labelPosition);
+}
+
+void Node::setIsSelected(bool isSelected) {
+	this->isSelected = isSelected;
+}
+
+bool Node::getIsSelected() {
+	return this->isSelected;
 }

@@ -10,6 +10,10 @@
 
 void renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime);
 void addTransitionsToAllOtherNodesTest(int newNodeId, NodeManager*& nodeManager);
+void addNewNode(NodeManager*& nm, const NodeType& selectedNodeTypeToCreate, sf::RenderWindow& window);
+void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, const int& previousSelectedNode, NodeManager*& nm);
+bool checkIfNodeBeingSelected(int& selectedNode, const sf::Vector2f& mousePosition, NodeManager*& nodeManager);
+void unselectPreviousNode(const int& previousNode, NodeManager*& nm);
 
 Editor::Editor(sf::Vector2i screenSize, std::string applicationName) 
 	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) 
@@ -39,20 +43,27 @@ void Editor::editorLoop()
 {
     std::unique_ptr<NodeManager> nodeManager = std::make_unique<NodeManager>(nodeLabelFont);
     NodeType selectedNodeTypeToCreate = NodeType::PRODUCER;
+    int currentSelectedNode = -1;
 
     while (window.isOpen())
     {
         deltaTime = deltaTimeClock.restart();
         NodeManager* nm = nodeManager.get();    
         const auto& io = ImGui::GetIO(); 
+        const sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(window);
+        const int previousSelectedNode = currentSelectedNode;
 
         while (window.pollEvent(e))
         {
-            ImGui::SFML::ProcessEvent(e);
-
+            ImGui::SFML::ProcessEvent(window, e);
+            
             if (e.type == sf::Event::Closed)
             {
                 window.close();
+            }
+
+            if (e.type == sf::Event::MouseMoved) {
+                
             }
 
             if (e.type == sf::Event::TextEntered && !io.WantCaptureKeyboard)
@@ -64,16 +75,15 @@ void Editor::editorLoop()
             }
 
             if (e.type == sf::Event::MouseButtonReleased && !io.WantCaptureMouse) {
-                const int nodeId = nm->addNode(
-                    selectedNodeTypeToCreate,
-                    30.f,
-                    (sf::Vector2f)sf::Mouse::getPosition(window),
-                    sf::Color::White
-                );
+                bool nodeSelected = checkIfNodeBeingSelected(currentSelectedNode, mousePosition, nm);
 
-                Logger::info(__FILE__, __LINE__, "Nodes size: " + std::to_string(nm->getNodesView().size()));
-            
-                //addTransitionsToAllOtherNodesTest(nodeId, nm);
+                if (!nodeSelected) {
+                    addNewNode(nm, selectedNodeTypeToCreate, window);
+                    unselectPreviousNode(previousSelectedNode, nm);
+                }
+                else {
+                    selectNewNodeAndUnselectPrevious(currentSelectedNode, previousSelectedNode, nm);
+                }
             }
         }
 
@@ -109,5 +119,60 @@ void addTransitionsToAllOtherNodesTest(int newNodeId, NodeManager*& nodeManager)
         }
 
         nodeManager->connectTwoNodes(newNodeId, node->getId());
+    }
+}
+
+void addNewNode(NodeManager*& nm, const NodeType& selectedNodeTypeToCreate, sf::RenderWindow& window) {
+    NodeCreateArgs nodeCreateArgs = NodeCreateArgs(
+        selectedNodeTypeToCreate,
+        30.f,
+        (sf::Vector2f)sf::Mouse::getPosition(window),
+        sf::Color::White
+    );
+    
+    const int nodeId = nm->addNode(nodeCreateArgs);
+
+    Logger::info(__FILE__, __LINE__, "Nodes size: " + std::to_string(nm->getNodesView().size()));
+            
+    //addTransitionsToAllOtherNodesTest(nodeId, nm);
+}
+
+// To do: this can be improved massively by using a simple grid system
+bool checkIfNodeBeingSelected(int& selectedNode, const sf::Vector2f& mousePosition, NodeManager*& nodeManager) {
+    for (int i = 0; i < nodeManager->getNodesModifiable().size(); ++i) {
+        const auto& node = nodeManager->getNodesModifiable()[i].get();
+        const auto& nodeShape = node->getNodeShape().getCircleShape();
+        
+        // use our own point check as SFML uses a minimum bounding rectangle
+        if (GenericMath::checkIfCircleContainsPoint(mousePosition, nodeShape.getPosition(), nodeShape.getRadius())) {
+            selectedNode = node->getId();
+            return true;
+        }
+    }
+
+    selectedNode = -1;
+    return false;
+}
+
+void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, const int& previousSelectedNode,
+    NodeManager*& nm) {
+    if (currentSelectedNode == -1) {
+        return;
+    }
+
+    if (currentSelectedNode == previousSelectedNode) {
+        return;
+    }
+
+    unselectPreviousNode(previousSelectedNode, nm);
+
+    nm->getNodesModifiable()[currentSelectedNode]
+        ->setIsSelected(true);
+}
+
+void unselectPreviousNode(const int& previousNode, NodeManager*& nm) {
+    if (previousNode != -1 && nm->getNodesModifiable()[previousNode]) {
+        nm->getNodesModifiable()[previousNode]
+            ->setIsSelected(false);
     }
 }

@@ -37,4 +37,10 @@ struct GenericMath final {
             distY(getRNG())
         );
     }
+
+    static inline bool checkIfCircleContainsPoint(const sf::Vector2f& point, const sf::Vector2f& circleCenter, const float radius) {
+        float dx = point.x - circleCenter.x;
+        float dy = point.y - circleCenter.y;
+        return (dx * dx + dy * dy) <= (radius * radius);
+    }
 };

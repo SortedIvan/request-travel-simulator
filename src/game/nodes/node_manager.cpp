@@ -12,6 +12,7 @@ NodeManager::~NodeManager() {
 
 bool NodeManager::checkIfIdValid(int id) {
 	if (id >= nodes.size() || id < 0 || nodes[id] == nullptr) {
+		Logger::warn(__FILE__,__LINE__, "Node id: " + std::to_string(id) + " is not valid");
 		return false;
 	}
 	return true;
@@ -60,21 +61,33 @@ void NodeManager::addNode(std::unique_ptr<Node> node) {
 	}
 }
 
-int NodeManager::addNode(NodeType nodeType, int nodeShapeSize, const sf::Vector2f position, 
-	sf::Color nodeColor = sf::Color::White) {
-	
+std::unique_ptr<Node> NodeManager::createNode(const NodeCreateArgs& nodeArgs) {
 	int id = getNodeId();
-	auto node = std::make_unique<Node>(nodeType, id, nodeShapeSize, position, nodeColor,
-		nodeLabelFont, defaultNodeLabelFillColor);
+    switch (nodeArgs.nodeType)
+    {
+        case NodeType::CONSUMER:
+            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor);
 
-	if (nodes.size() <= id) {
+        case NodeType::PRODUCER:
+            return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor);
+
+        default:
+            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor);
+    }
+}
+
+int NodeManager::addNode(const NodeCreateArgs& nodeCreateArgs) {
+	auto node = createNode(nodeCreateArgs);
+	const int nodeId = node.get()->getId();
+
+	if (nodes.size() <= nodeId) {
 		nodes.push_back(std::move(node));
 	}
 	else {
-		nodes[id] = std::move(node);
+		nodes[nodeId] = std::move(node);
 	}
 
-	return id;
+	return nodeId;
 }
 
 void NodeManager::removeNode(int id) {
@@ -88,6 +101,7 @@ bool NodeManager::checkIfConnectionExists(int nodeFrom, int nodeTo) {
 		auto nodeFromToPair = nodes[nodeFrom]->getNodeConnections()[i].getNodeFromAndTo();
 
 		if (nodeFromToPair.second->getId() == nodeTo) {
+			Logger::warn(__FILE__,__LINE__, "Connection already exists from node: " + std::to_string(nodeFrom) + " to node: " + std::to_string(nodeTo));
 			return true;
 		}
 	}

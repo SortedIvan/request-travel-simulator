@@ -1,6 +1,7 @@
 #include <vector>
 #include <stack>
 #include "node.hpp"
+#include "node_utils.hpp"
 
 class NodeManager {
 private:
@@ -17,14 +18,15 @@ private:
 	bool checkIfConnectionExists(int nodeFrom, int nodeTo);
 	int getNodeId();
 
+	std::unique_ptr<Node> createNode(const NodeCreateArgs& nodeArgs);
+
 public:
 	NodeManager(sf::Font& nodeLabelFont);
 	~NodeManager();
 	
 	void connectTwoNodes(int nodeFrom, int nodeTo);
 	void addNode(std::unique_ptr<Node> node);
-	int addNode(NodeType nodeType, int nodeShapeSize,
-		const sf::Vector2f position, sf::Color nodeColor);
+	int addNode(const NodeCreateArgs& nodeCreateArgs);
 	void removeNode(int id);
 	void draw(sf::RenderWindow& window);
 	void update(float deltaTime);
