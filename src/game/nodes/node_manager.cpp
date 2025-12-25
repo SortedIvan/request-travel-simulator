@@ -2,14 +2,13 @@
 #include <iostream>
 #include "../../utils/logger.hpp"
 
-NodeManager::NodeManager() {
-
+NodeManager::NodeManager(sf::Font& nodeLabelFont) : nodeLabelFont(nodeLabelFont) {
+	
 }
 
 NodeManager::~NodeManager() {
 
 }
-
 
 bool NodeManager::checkIfIdValid(int id) {
 	if (id >= nodes.size() || id < 0 || nodes[id] == nullptr) {
@@ -65,7 +64,8 @@ int NodeManager::addNode(NodeType nodeType, int nodeShapeSize, const sf::Vector2
 	sf::Color nodeColor = sf::Color::White) {
 	
 	int id = getNodeId();
-	auto node = std::make_unique<Node>(nodeType, id, nodeShapeSize, position, nodeColor);
+	auto node = std::make_unique<Node>(nodeType, id, nodeShapeSize, position, nodeColor,
+		nodeLabelFont, defaultNodeLabelFillColor);
 
 	if (nodes.size() <= id) {
 		nodes.push_back(std::move(node));
@@ -102,8 +102,8 @@ void NodeManager::connectTwoNodes(int nodeFrom, int nodeTo) {
 
 	Logger::info(__FILE__,__LINE__, "Attempting to connect node " + std::to_string(nodeFrom) + "to node" + std::to_string(nodeTo));
 
-	// Connective contains std::vector<unique_ptr>> which is NON-COPYABLE
-	// thus, we need to emplace back here directly
+	// Connective contains std::vector<unique_ptr<Request>> -> NON-COPYABLE
+	// we need to emplace back here directly
 	nodes[nodeFrom]->getNodeConnections().emplace_back(
 		nodes[nodeFrom].get(), nodes[nodeTo].get(), defaultConnectiveColor
 	);

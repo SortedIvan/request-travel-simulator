@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+// To do: this could cache files, etc.
+// example, can have a map of raw __FILE__ to the parsed file
 struct Logger final {
 	static std::string getFileName(const std::string& file) {
 		if (file.empty()) {
@@ -25,11 +27,11 @@ struct Logger final {
 		std::cout << "[INFO][" << loc << "][" << getFileName(file) << "]" << message << std::endl;
 	}
 
-	constexpr static void error() {
-
+	static void error(const std::string file = __FILE__, int loc = __LINE__, const std::string message = "Hello world") {
+		std::cout << "[ERROR][" << loc << "][" << getFileName(file) << "]" << message << std::endl;
 	}
 
-	constexpr static void warn() {
+	static void warn() {
 
 	}
 

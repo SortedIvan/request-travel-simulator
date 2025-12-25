@@ -7,7 +7,8 @@
 
 int main() {
 	Editor editor(sf::Vector2i(1200, 1200), "Packet flow simulator");
-	editor.run();
+	editor.initialize();
+	editor.editorLoop();
 	editor.~Editor();
 	return EXIT_SUCCESS;
 }

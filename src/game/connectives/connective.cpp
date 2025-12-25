@@ -1,7 +1,7 @@
 #include "../src/math_utils/vec_math.hpp"
 #include "./connective.hpp"
 #include "../src/generic_drawables/point.hpp"
-#include "node.hpp"
+#include "../nodes/node.hpp"
 
 Connective::Connective(Node* nodeFrom, Node* nodeTo, const sf::Color connectiveColor) {
 	this->nodeFrom = nodeFrom;

@@ -2,9 +2,10 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "../utils/logger.hpp"
+#include "../utils/file_util.hpp"
 #include "../generic_drawables/point.hpp"
 #include "../math_utils/generic_math.hpp"
-#include "../game/nodes/connective.hpp"
+#include "../game/connectives/connective.hpp"
 #include "../game/nodes/node_manager.hpp"
 
 void renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime);
@@ -30,9 +31,14 @@ void Editor::update() {
 
 }
 
-void Editor::run() 
+void Editor::initialize() {
+    FileUtil::tryLoadFont(this->nodeLabelFont, PIXEL_FONT_PATH);
+}
+
+void Editor::editorLoop() 
 {
-    std::unique_ptr<NodeManager> nodeManager = std::make_unique<NodeManager>();
+    std::unique_ptr<NodeManager> nodeManager = std::make_unique<NodeManager>(nodeLabelFont);
+    NodeType selectedNodeTypeToCreate = NodeType::PRODUCER;
 
     while (window.isOpen())
     {
@@ -51,12 +57,15 @@ void Editor::run()
 
             if (e.type == sf::Event::TextEntered && !io.WantCaptureKeyboard)
             {
-
+                if (e.text.unicode >= '0' && e.text.unicode <= '9') {
+                    const int digitValue = e.text.unicode - '0';
+                    selectedNodeTypeToCreate = static_cast<NodeType>(digitValue);
+                }
             }
 
             if (e.type == sf::Event::MouseButtonReleased && !io.WantCaptureMouse) {
                 const int nodeId = nm->addNode(
-                    NodeType::PRODUCER,
+                    selectedNodeTypeToCreate,
                     30.f,
                     (sf::Vector2f)sf::Mouse::getPosition(window),
                     sf::Color::White
@@ -64,7 +73,7 @@ void Editor::run()
 
                 Logger::info(__FILE__, __LINE__, "Nodes size: " + std::to_string(nm->getNodesView().size()));
             
-                addTransitionsToAllOtherNodesTest(nodeId, nm);
+                //addTransitionsToAllOtherNodesTest(nodeId, nm);
             }
         }
 
@@ -76,7 +85,7 @@ void Editor::run()
 
         // Draw everything else first
         nm->draw(window);
-        
+
         // Finally, draw the UI (always ontop)
         ImGui::SFML::Render(window);
 

@@ -6,16 +6,19 @@ class NodeManager {
 private:
 	std::vector<std::unique_ptr<Node>> nodes;
 	std::stack<int> idStack;
-	int nodeIdCounter = 0;
 	sf::Color defaultConnectiveColor = sf::Color::White;
 	sf::Color defaultNodeColor = sf::Color::White;
-	
+	sf::Color defaultNodeLabelFillColor = sf::Color::Black;
+	sf::Font& nodeLabelFont;
+
+	int nodeIdCounter = 0;
+
 	bool checkIfIdValid(int id);
 	bool checkIfConnectionExists(int nodeFrom, int nodeTo);
 	int getNodeId();
 
 public:
-	NodeManager();
+	NodeManager(sf::Font& nodeLabelFont);
 	~NodeManager();
 	
 	void connectTwoNodes(int nodeFrom, int nodeTo);
