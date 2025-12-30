@@ -18,7 +18,6 @@ private:
 	sf::Color connectiveColor;
 
 	void initializeConnectiveDrawable();
-	void initializeConnectiveDrawableDummy(sf::Vector2f from, sf::Vector2f to);
 public:
 	~Connective();
 	Connective();
@@ -29,6 +28,7 @@ public:
 	Connective(Connective&&) noexcept = default;
 	Connective& operator=(Connective&&) noexcept = default;
 
+	void initializeConnectiveDrawableDummy(sf::Vector2f from, sf::Vector2f to);
 	bool isActive();
 	void setIsActive(const bool isActive);
 	void draw(sf::RenderWindow& window);
@@ -38,4 +38,5 @@ public:
 	int getRequestsPassedThrough();
 	void addRequest(std::unique_ptr<Request> request);
 	std::pair<Node*, Node*> getNodeFromAndTo();
+	void setConnectiveColor(sf::Color color);
 };

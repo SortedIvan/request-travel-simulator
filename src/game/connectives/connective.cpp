@@ -110,3 +110,7 @@ std::pair<Node*, Node*> Connective::getNodeFromAndTo() {
 void Connective::addRequest(std::unique_ptr<Request> request) {
 	this->currentRequests.push_back(std::move(request));
 }
+
+void Connective::setConnectiveColor(sf::Color color) {
+	this->connectiveColor = color;
+}

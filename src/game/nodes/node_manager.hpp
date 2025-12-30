@@ -24,6 +24,7 @@ public:
 	NodeManager(sf::Font& nodeLabelFont);
 	~NodeManager();
 	
+	Node* getNode(int nodeIndex);
 	void connectTwoNodes(int nodeFrom, int nodeTo);
 	void addNode(std::unique_ptr<Node> node);
 	int addNode(const NodeCreateArgs& nodeCreateArgs);

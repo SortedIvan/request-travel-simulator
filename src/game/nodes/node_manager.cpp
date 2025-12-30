@@ -110,9 +110,9 @@ bool NodeManager::checkIfConnectionExists(int nodeFrom, int nodeTo) {
 }
 
 void NodeManager::connectTwoNodes(int nodeFrom, int nodeTo) {
-	if (!checkIfIdValid(nodeFrom)) { return; }
-	if (!checkIfIdValid(nodeTo)) { return; }
-	if (checkIfConnectionExists(nodeFrom, nodeTo)) { return; }
+	if (!checkIfIdValid(nodeFrom)) return;
+	if (!checkIfIdValid(nodeTo)) return;
+	if (checkIfConnectionExists(nodeFrom, nodeTo)) return;
 
 	Logger::info(__FILE__,__LINE__, "Attempting to connect node " + std::to_string(nodeFrom) + "to node" + std::to_string(nodeTo));
 
@@ -122,4 +122,9 @@ void NodeManager::connectTwoNodes(int nodeFrom, int nodeTo) {
 		nodes[nodeFrom].get(), nodes[nodeTo].get(), defaultConnectiveColor
 	);
 
+}
+
+Node* NodeManager::getNode(int nodeIndex) {
+	if (nodeIndex < 0) return nullptr;
+	return nodes[nodeIndex].get();
 }
