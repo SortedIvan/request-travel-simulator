@@ -1,4 +1,5 @@
 #include "request.hpp"
+//#include "../math_utils/generic_math.hpp"
 
 Request::~Request() {
 
@@ -24,4 +25,14 @@ sf::Vector2f Request::getPosition() {
 
 void Request::draw(sf::RenderWindow& window) {
 	window.draw(shape);
+}
+
+void Request::lerpTowards(sf::Vector2f& position, float deltaTime) {
+    // float new_x = GenericMath::lerp(shape.getPosition().x, position.x, 1 - std::pow(0.5, deltaTime));
+    // float new_y = GenericMath::lerp(shape.getPosition().y, position.y, 1 - std::pow(0.5, deltaTime));
+    //shape.setPosition(new_x, new_y);
+}
+
+void Request::update(float deltaTime) {
+	//if (shape.getLocalBounds().intersects())
 }

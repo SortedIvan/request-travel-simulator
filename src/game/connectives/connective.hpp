@@ -23,10 +23,11 @@ public:
 	Connective();
 	Connective(const Connective&) = delete;
 	Connective& operator=(const Connective&) = delete;
-	Connective(Node* nodeFrom, Node* nodeTo, const sf::Color connectiveColor);
-	Connective(const sf::Vector2f positionFrom, const sf::Vector2f positionTo, const sf::Color connectiveColor);
 	Connective(Connective&&) noexcept = default;
 	Connective& operator=(Connective&&) noexcept = default;
+
+	Connective(Node* nodeFrom, Node* nodeTo, const sf::Color connectiveColor);
+	Connective(const sf::Vector2f positionFrom, const sf::Vector2f positionTo, const sf::Color connectiveColor);
 
 	void initializeConnectiveDrawableDummy(sf::Vector2f from, sf::Vector2f to);
 	bool isActive();

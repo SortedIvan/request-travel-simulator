@@ -8,12 +8,12 @@
 #include "../game/connectives/connective.hpp"
 #include "../game/nodes/node_manager.hpp"
 
-void renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime);
 void addTransitionsToAllOtherNodesTest(int newNodeId, NodeManager*& nodeManager);
 void addNewNode(NodeManager*& nm, const NodeType& selectedNodeTypeToCreate, sf::RenderWindow& window);
 void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, const int& previousSelectedNode, NodeManager*& nm);
 bool checkIfNodeBeingSelected(int& selectedNode, const sf::Vector2f& mousePosition, NodeManager*& nodeManager);
 void unselectNode(const int& previousNode, NodeManager*& nm);
+void resetDisplayConnective(Connective& connective);
 
 Editor::Editor(sf::Vector2i screenSize, std::string applicationName) 
 	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) 
@@ -44,8 +44,8 @@ void Editor::editorLoop()
     std::unique_ptr<NodeManager> nodeManager = std::make_unique<NodeManager>(nodeLabelFont);
     NodeType selectedNodeTypeToCreate = NodeType::PRODUCER;
     int currentSelectedNode = -1;
-    Connective editorDisplayConnective = Connective();
-    editorDisplayConnective.setConnectiveColor(sf::Color::White);
+    Connective editorDisplayConnective;
+    resetDisplayConnective(editorDisplayConnective);
     
     while (window.isOpen())
     {
@@ -91,9 +91,11 @@ void Editor::editorLoop()
                     unselectNode(currentSelectedNode, nm);
                     currentSelectedNode = -1;
                     setState(EditorState::ADDING_NODE);
+                    resetDisplayConnective(editorDisplayConnective);
                 }
                 else if (e.text.unicode == 'c') {
                     setState(EditorState::ADDING_CONNECTION);
+                    resetDisplayConnective(editorDisplayConnective);
 
                     if (currentSelectedNode != -1) {
                         Node* currentNode = nm->getNode(currentSelectedNode);
@@ -109,6 +111,10 @@ void Editor::editorLoop()
                             currentSelectedNode = -1;
                         }
                     }
+                }
+                else if (e.text.unicode == 's') {
+                    // start the simulation
+
                 }
                 else if (e.text.unicode >= '0' && e.text.unicode <= '9') {
                     const int digitValue = e.text.unicode - '0';
@@ -129,6 +135,7 @@ void Editor::editorLoop()
                 if (!nodeSelected && getState() == EditorState::ADDING_NODE) {
                     addNewNode(nm, selectedNodeTypeToCreate, window);
                     unselectNode(previousSelectedNode, nm);
+                    resetDisplayConnective(editorDisplayConnective);
                 }
                 else if (getState() == EditorState::ADDING_CONNECTION) {
 
@@ -137,10 +144,11 @@ void Editor::editorLoop()
                         previousSelectedNode != -1)
                     {
                         nm->connectTwoNodes(previousSelectedNode, currentSelectedNode);
-                        unselectNode(previousSelectedNode, nm);
-                        unselectNode(currentSelectedNode, nm);
                         setState(EditorState::VIEW);
                     }
+
+                    unselectNode(previousSelectedNode, nm);
+                    unselectNode(currentSelectedNode, nm);
                 }
                 else {
                     selectNewNodeAndUnselectPrevious(
@@ -150,7 +158,6 @@ void Editor::editorLoop()
                     );
                 }
             }
-
         }
 
         // Update
@@ -181,10 +188,11 @@ EditorState Editor::getState() {
     return editorState;
 }
 
-void renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime) {
+void Editor::renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime) {
     ImGui::SFML::Update(window, deltaTime);
-    ImGui::Begin("Window title");
-    ImGui::Text("Window text!");
+    ImGui::Begin("Info");
+    const std::string currentStateLabel = "Editor state: " + editorStateToString(getState());
+    ImGui::Text(currentStateLabel.c_str());
     ImGui::End();
 }
 
@@ -252,5 +260,25 @@ void unselectNode(const int& previousNode, NodeManager*& nm) {
     if (previousNode != -1 && nm->getNodesModifiable()[previousNode]) {
         nm->getNodesModifiable()[previousNode]
             ->setIsSelected(false);
+    }
+}
+
+void resetDisplayConnective(Connective& connective) {
+    connective = Connective();
+    connective.setConnectiveColor(sf::Color::White);
+}
+
+std::string Editor::editorStateToString(const EditorState& editorState) {
+    switch (editorState) {
+        case VIEW:
+            return "VIEW";
+        case ADDING_NODE:
+            return "ADDING_NODE";
+        case ADDING_CONNECTION:
+            return "ADDING_CONNECTION";
+        case RUNNING_SIMULATION:
+            return "RUNNING_SIMULATION";
+        _:
+        return "NONE";
     }
 }
