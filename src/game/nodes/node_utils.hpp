@@ -9,7 +9,7 @@ enum NodeType {
 	MULTIPLICATOR
 };
 
-static inline const char* nodeTypeToString(NodeType nt)
+static inline const char* nodeTypeToString(NodeType& nt)
 {
     switch (nt)
     {
@@ -20,6 +20,18 @@ static inline const char* nodeTypeToString(NodeType nt)
 		case MULTIPLICATOR: 	return "M";
         default:                return "None";
     }
+}
+
+static inline const char* nodeTypeToStringFullName(NodeType& nt) {
+	switch (nt)
+	{
+		case NONE:       		return "None";
+		case PRODUCER:   		return "Producer";
+		case CONSUMER:   		return "Consumer";
+		case DISTRIBUTOR: 		return "Distrubutor";
+		case MULTIPLICATOR: 	return "Multiplicator";
+		default:                return "None";
+	}
 }
 
 struct NodeCreateArgs {

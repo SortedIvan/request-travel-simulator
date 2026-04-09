@@ -26,9 +26,11 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\ecs\manager\ecs_manager.cpp" />
     <ClCompile Include="src\editor\editor.cpp" />
-    <ClCompile Include="src\game\nodes\connective.cpp" />
+    <ClCompile Include="src\game\connectives\connective.cpp" />
+    <ClCompile Include="src\game\nodes\consumer_node.cpp" />
     <ClCompile Include="src\game\nodes\node.cpp" />
     <ClCompile Include="src\game\nodes\node_manager.cpp" />
+    <ClCompile Include="src\game\nodes\producer_node.cpp" />
     <ClCompile Include="src\game\requests\request.cpp" />
     <ClCompile Include="src\generic_drawables\dashed_line.cpp" />
     <ClCompile Include="src\generic_drawables\line.cpp" />
@@ -148,9 +150,11 @@
     <ClInclude Include="src\ecs\component\components.hpp" />
     <ClInclude Include="src\ecs\manager\ecs_manager.hpp" />
     <ClInclude Include="src\editor\editor.hpp" />
+    <ClInclude Include="src\game\connectives\connective.hpp" />
     <ClInclude Include="src\game\nodes\connective.hpp" />
     <ClInclude Include="src\game\nodes\node.hpp" />
     <ClInclude Include="src\game\nodes\node_manager.hpp" />
+    <ClInclude Include="src\game\nodes\node_utils.hpp" />
     <ClInclude Include="src\game\requests\request.hpp" />
     <ClInclude Include="src\generic_drawables\dashed_line.hpp" />
     <ClInclude Include="src\generic_drawables\line.hpp" />
@@ -161,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="imgui.ini" />
     <None Include="include\SFML\Audio\SoundFileFactory.inl" />
     <None Include="include\SFML\Graphics\Glsl.inl" />
     <None Include="include\SFML\Graphics\Rect.inl" />
@@ -229,6 +234,9 @@
     <Library Include="lib\vorbis.lib" />
     <Library Include="lib\vorbisenc.lib" />
     <Library Include="lib\vorbisfile.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="testfont.ttf" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -1,19 +1,21 @@
 #include "editor.hpp"
-#include "imgui.h"
-#include "imgui-SFML.h"
 #include "../utils/logger.hpp"
 #include "../utils/file_util.hpp"
 #include "../generic_drawables/point.hpp"
 #include "../math_utils/generic_math.hpp"
-#include "../game/connectives/connective.hpp"
-#include "../game/nodes/node_manager.hpp"
+#include "imgui-SFML.h"
 
 void addTransitionsToAllOtherNodesTest(int newNodeId, NodeManager*& nodeManager);
 void addNewNode(NodeManager*& nm, const NodeType& selectedNodeTypeToCreate, sf::RenderWindow& window);
-void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, const int& previousSelectedNode, NodeManager*& nm);
+void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, int& previousSelectedNode, NodeManager*& nm);
 bool checkIfNodeBeingSelected(int& selectedNode, const sf::Vector2f& mousePosition, NodeManager*& nodeManager);
-void unselectNode(const int& previousNode, NodeManager*& nm);
+void unselectNode(int& previousNode, NodeManager*& nm);
 void resetDisplayConnective(Connective& connective);
+void initializeDefaultEditorStateKeybinds(std::unordered_map<char, EditorState>& keybindMap);
+
+Editor::Editor() {
+    io = ImGui::GetIO();
+}
 
 Editor::Editor(sf::Vector2i screenSize, std::string applicationName) 
 	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) 
@@ -31,27 +33,56 @@ void Editor::draw() {
 
 }
 
-void Editor::update() {
-
-}
-
 void Editor::initialize() {
     FileUtil::tryLoadFont(this->nodeLabelFont, PIXEL_FONT_PATH);
+    initializeDefaultEditorStateKeybinds(this->stateKeybinds);
+}
+
+void Editor::handleInput(NodeManager* nm) {
+    // ------------------ Mouse ------------------
+    if (e.type == sf::Event::MouseMoved) {
+        if (getState() == ADDING_CONNECTION && currentSelectedNode != -1) {
+            Node* currentNode = nm->getNode(currentSelectedNode);
+
+            if (currentNode) {
+                editorDisplayConnective.initializeConnectiveDrawableDummy(
+                    currentNode->getNodeShape().getPosition(),
+                    static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))
+                );
+            }
+            else {
+                currentSelectedNode = -1;
+            }
+        }
+    }
+    
+
+    // ------------------ Keyboard + text ------------------
+    if (e.type == sf::Event::TextEntered && !io.WantCaptureKeyboard) {
+        changeState(e.text.unicode, nm);
+    }
+
+    if (e.text.unicode >= '0' && e.text.unicode <= '9') {
+        const int digitValue = e.text.unicode - '0';
+        selectedNodeTypeToCreate = static_cast<NodeType>(digitValue);
+    }
+
+    if (e.type == sf::Event::KeyReleased) {
+        if (e.key.code == sf::Keyboard::LShift) {
+
+        }
+    }
 }
 
 void Editor::editorLoop() 
 {
-    std::unique_ptr<NodeManager> nodeManager = std::make_unique<NodeManager>(nodeLabelFont);
-    NodeType selectedNodeTypeToCreate = NodeType::PRODUCER;
-    int currentSelectedNode = -1;
-    Connective editorDisplayConnective;
     resetDisplayConnective(editorDisplayConnective);
     
     while (window.isOpen())
     {
         deltaTime = deltaTimeClock.restart();
         NodeManager* nm = nodeManager.get();    
-        const auto& io = ImGui::GetIO(); 
+        this->io = ImGui::GetIO(); 
 
         while (window.pollEvent(e))
         {
@@ -62,65 +93,7 @@ void Editor::editorLoop()
                 window.close();
             }
 
-            if (e.type == sf::Event::MouseMoved) {
-                if (getState() == ADDING_CONNECTION && currentSelectedNode != -1) {
-                        Node* currentNode = nm->getNode(currentSelectedNode);
-
-                        if (currentNode) {
-                            editorDisplayConnective.initializeConnectiveDrawableDummy(
-                                currentNode->getNodeShape().getPosition(),
-                                static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))
-                            );
-                        }
-                        else {
-                            currentSelectedNode = -1;
-                        }
-                }
-
-            }
-
-            if (e.type == sf::Event::KeyReleased) {
-                if (e.key.code == sf::Keyboard::LShift) {
-
-                }
-            }
-
-            if (e.type == sf::Event::TextEntered && !io.WantCaptureKeyboard)
-            {
-                if (e.text.unicode == 'a') {
-                    unselectNode(currentSelectedNode, nm);
-                    currentSelectedNode = -1;
-                    setState(EditorState::ADDING_NODE);
-                    resetDisplayConnective(editorDisplayConnective);
-                }
-                else if (e.text.unicode == 'c') {
-                    setState(EditorState::ADDING_CONNECTION);
-                    resetDisplayConnective(editorDisplayConnective);
-
-                    if (currentSelectedNode != -1) {
-                        Node* currentNode = nm->getNode(currentSelectedNode);
-
-                        if (currentNode) {
-                            editorDisplayConnective.initializeConnectiveDrawableDummy(
-                                currentNode->getNodeShape().getPosition(),
-                                static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))
-                            );
-                        }
-                        else {
-                            // Somehow the node got deleted, this not expected behavior but handling it gracefully
-                            currentSelectedNode = -1;
-                        }
-                    }
-                }
-                else if (e.text.unicode == 's') {
-                    // start the simulation
-
-                }
-                else if (e.text.unicode >= '0' && e.text.unicode <= '9') {
-                    const int digitValue = e.text.unicode - '0';
-                    selectedNodeTypeToCreate = static_cast<NodeType>(digitValue);
-                }
-            }
+            handleInput(nm);
 
             if (e.type == sf::Event::MouseButtonReleased && !io.WantCaptureMouse) {
                 // Capture previous selection JUST before it may change
@@ -145,10 +118,15 @@ void Editor::editorLoop()
                     {
                         nm->connectTwoNodes(previousSelectedNode, currentSelectedNode);
                         setState(EditorState::VIEW);
-                    }
 
-                    unselectNode(previousSelectedNode, nm);
-                    unselectNode(currentSelectedNode, nm);
+                        unselectNode(previousSelectedNode, nm);
+                        unselectNode(currentSelectedNode, nm);
+                        resetDisplayConnective(editorDisplayConnective);
+                    }
+                    else {
+                        // Clicked on the same node or not on a node
+                        resetDisplayConnective(editorDisplayConnective);
+                    }
                 }
                 else {
                     selectNewNodeAndUnselectPrevious(
@@ -180,6 +158,34 @@ void Editor::editorLoop()
     }
 }
 
+void Editor::changeState(char stateChangeInput, NodeManager* nm) {
+    const auto& stateKeybinds = getStateKeybinds();
+    
+    if (stateKeybinds.find(stateChangeInput) == stateKeybinds.end()) {
+        // we are not attempting to change the state
+        return;
+    }
+
+    const EditorState& newState = stateKeybinds.at(stateChangeInput);
+    if (newState == editorState) { return; }
+    
+    // Do all clearouts here, for now just clear everything between state swaps for consistency
+    unselectNode(currentSelectedNode, nm);
+    resetDisplayConnective(editorDisplayConnective);
+    currentSelectedNode = -1;
+
+    setState(newState);
+}
+
+void initializeDefaultEditorStateKeybinds(std::unordered_map<char, EditorState>& keybindMap) {
+    keybindMap = {
+        {'v', EditorState::VIEW},
+        {'a', EditorState::ADDING_NODE},
+        {'c', EditorState::ADDING_CONNECTION},
+        {'r', EditorState::RUNNING_SIMULATION}
+    };
+}
+
 void Editor::setState(EditorState editorState) {
     this->editorState = editorState;
 }
@@ -188,12 +194,41 @@ EditorState Editor::getState() {
     return editorState;
 }
 
+// ----- IMGUI -------
+void renderCurrentState(Editor& editor) {
+    ImGui::Begin("Editor state");
+    const std::string currentStateLabel = "Current editor state: " + editor.editorStateToString(editor.getState());
+    ImGui::Text(currentStateLabel.c_str());
+   
+    if (editor.getState() == EditorState::ADDING_NODE) {
+        std::string stateFullName = nodeTypeToStringFullName(editor.getSelectedNodeTypeToCreate());
+        std::string labelAddingNode = "Current selected node type to add: " + stateFullName;
+        ImGui::Text(labelAddingNode.c_str());
+    }
+
+    ImGui::Text("-------------------------------");
+    ImGui::Text("Available keybinds");
+
+    for (const auto& keybind : editor.getStateKeybinds()) {
+        std::string keybindStr = std::string(1, static_cast<char>(std::toupper(keybind.first))) 
+            + ": " + editor.editorStateToString(keybind.second);
+        ImGui::Text(keybindStr.data());
+    }
+
+    ImGui::End();
+}
+
+const std::unordered_map<char, EditorState>& Editor::getStateKeybinds() {
+    return this->stateKeybinds;
+}
+
+NodeType& Editor::getSelectedNodeTypeToCreate() {
+    return this->selectedNodeTypeToCreate;
+}
+
 void Editor::renderImguiSfml(sf::RenderWindow& window, sf::Time& deltaTime) {
     ImGui::SFML::Update(window, deltaTime);
-    ImGui::Begin("Info");
-    const std::string currentStateLabel = "Editor state: " + editorStateToString(getState());
-    ImGui::Text(currentStateLabel.c_str());
-    ImGui::End();
+    renderCurrentState(*this);
 }
 
 void addTransitionsToAllOtherNodesTest(int newNodeId, NodeManager*& nodeManager) {
@@ -240,7 +275,7 @@ bool checkIfNodeBeingSelected(int& selectedNode, const sf::Vector2f& mousePositi
     return false;
 }
 
-void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, const int& previousSelectedNode,
+void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, int& previousSelectedNode,
     NodeManager*& nm) {
     if (currentSelectedNode == -1) {
         return;
@@ -252,15 +287,19 @@ void selectNewNodeAndUnselectPrevious(const int& currentSelectedNode, const int&
 
     unselectNode(previousSelectedNode, nm);
 
+    previousSelectedNode = -1;
+
     nm->getNodesModifiable()[currentSelectedNode]
         ->setIsSelected(true);
 }
 
-void unselectNode(const int& previousNode, NodeManager*& nm) {
+void unselectNode(int& previousNode, NodeManager*& nm) {
     if (previousNode != -1 && nm->getNodesModifiable()[previousNode]) {
         nm->getNodesModifiable()[previousNode]
             ->setIsSelected(false);
     }
+
+    previousNode = -1;
 }
 
 void resetDisplayConnective(Connective& connective) {
