@@ -1,5 +1,6 @@
 #include "request.hpp"
-//#include "../math_utils/generic_math.hpp"
+#include "../../math_utils/vec_math.hpp"
+#include <iostream>
 
 Request::~Request() {
 
@@ -9,10 +10,15 @@ Request::Request() {
 
 }
 
-Request::Request(const sf::Color color, const int width, const int length, const sf::Vector2f startingPosition) {
+Request::Request(const sf::Color color, const int width, const int length, const sf::Vector2f startingPosition,
+	sf::Vector2f destinationPosition, int lastNodePassedThrough) {
 	shape = sf::RectangleShape(sf::Vector2f(width, length));
 	shape.setPosition(startingPosition);
 	shape.setFillColor(color);
+
+	this->destinationPosition = destinationPosition;
+	this->direction = VecMath::normalize(destinationPosition - startingPosition);
+	this->lastNodePassedThrough = lastNodePassedThrough;
 }
 
 void Request::move(const sf::Vector2f displacement) {
@@ -28,11 +34,16 @@ void Request::draw(sf::RenderWindow& window) {
 }
 
 void Request::lerpTowards(sf::Vector2f& position, float deltaTime) {
-    // float new_x = GenericMath::lerp(shape.getPosition().x, position.x, 1 - std::pow(0.5, deltaTime));
-    // float new_y = GenericMath::lerp(shape.getPosition().y, position.y, 1 - std::pow(0.5, deltaTime));
-    //shape.setPosition(new_x, new_y);
+
+}
+
+int Request::getLastNodePassedThrough() {
+	return this->lastNodePassedThrough;
 }
 
 void Request::update(float deltaTime) {
-	//if (shape.getLocalBounds().intersects())
+	const auto& oldPos = shape.getPosition();
+	const auto& xDisplacement = deltaTime * moveSpeed * direction.x;
+	const auto& yDisplacement = deltaTime * moveSpeed * direction.y;
+	shape.setPosition(sf::Vector2f(oldPos.x + xDisplacement, oldPos.y + yDisplacement));
 }

@@ -54,12 +54,12 @@ void Connective::draw(sf::RenderWindow& window) {
 }
 
 void Connective::update(float deltaTime) {
-	for (int i = 0; i < currentRequests.size(); ++i) {
-		const auto& currRequestPtrRef = currentRequests[i].get();
-		currRequestPtrRef->update(deltaTime);
-		sf::Vector2f nodeToPos = nodeTo->getNodeShape().getPosition();
-		currRequestPtrRef->lerpTowards(nodeToPos, deltaTime);
-	}
+	//for (int i = 0; i < currentRequests.size(); ++i) {
+	//	const auto& currRequestPtrRef = currentRequests[i].get();
+	//	currRequestPtrRef->update(deltaTime);
+	//	sf::Vector2f nodeToPos = nodeTo->getNodeShape().getPosition();
+	//	currRequestPtrRef->lerpTowards(nodeToPos, deltaTime);
+	//}
 }
 
 void Connective::move() {
@@ -110,10 +110,6 @@ Connective::Connective() {
 
 std::pair<Node*, Node*> Connective::getNodeFromAndTo() {
 	return std::make_pair(nodeFrom, nodeTo);
-}
-
-void Connective::addRequest(std::unique_ptr<Request> request) {
-	this->currentRequests.push_back(std::move(request));
 }
 
 void Connective::setConnectiveColor(sf::Color color) {

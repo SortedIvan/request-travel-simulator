@@ -22,11 +22,19 @@ void NodeManager::draw(sf::RenderWindow& window) {
 	for (int i = 0; i < nodes.size(); ++i) {
 		nodes[i]->draw(window);
 	}
+
+	for (int i = 0; i < requests.size(); ++i) {
+		requests[i].get()->draw(window);
+	}
 }
 
 void NodeManager::update(float deltaTime) {
 	for (int i = 0; i < nodes.size(); ++i) {
 		nodes[i]->update(deltaTime);
+	}
+
+	for (int i = 0; i < requests.size(); ++i) {
+		requests[i].get()->update(deltaTime);
 	}
 }
 
@@ -66,13 +74,13 @@ std::unique_ptr<Node> NodeManager::createNode(const NodeCreateArgs& nodeArgs) {
     switch (nodeArgs.nodeType)
     {
         case NodeType::CONSUMER:
-            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor);
+            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
 
         case NodeType::PRODUCER:
-            return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor);
+            return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
 
         default:
-            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor);
+            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
     }
 }
 
@@ -101,7 +109,8 @@ bool NodeManager::checkIfConnectionExists(int nodeFrom, int nodeTo) {
 		auto nodeFromToPair = nodes[nodeFrom]->getNodeConnections()[i].getNodeFromAndTo();
 
 		if (nodeFromToPair.second->getId() == nodeTo) {
-			Logger::warn(__FILE__,__LINE__, "Connection already exists from node: " + std::to_string(nodeFrom) + " to node: " + std::to_string(nodeTo));
+			Logger::warn(__FILE__,__LINE__, "Connection already exists from node: " + std::to_string(nodeFrom) 
+				+ " to node: " + std::to_string(nodeTo));
 			return true;
 		}
 	}
@@ -127,4 +136,17 @@ void NodeManager::connectTwoNodes(int nodeFrom, int nodeTo) {
 Node* NodeManager::getNode(int nodeIndex) {
 	if (nodeIndex < 0) return nullptr;
 	return nodes[nodeIndex].get();
+}
+
+std::vector<std::unique_ptr<Request>>& NodeManager::getRequests() {
+	return requests;
+}
+
+void NodeManager::addRequest(Request request) {
+	requests.push_back(std::make_unique<Request>(request));
+}
+
+void NodeManager::removeRequest(int index) {
+	requests[index].release();
+	requests.erase(requests.begin() + index);
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <stack>
 #include "node.hpp"
@@ -6,6 +7,7 @@
 class NodeManager {
 private:
 	std::vector<std::unique_ptr<Node>> nodes;
+	std::vector<std::unique_ptr<Request>> requests;
 	std::stack<int> idStack;
 	sf::Color defaultConnectiveColor = sf::Color::White;
 	sf::Color defaultNodeColor = sf::Color::White;
@@ -24,11 +26,15 @@ public:
 	NodeManager(sf::Font& nodeLabelFont);
 	~NodeManager();
 	
+	std::vector<std::unique_ptr<Request>>& getRequests();
+
 	Node* getNode(int nodeIndex);
 	void connectTwoNodes(int nodeFrom, int nodeTo);
 	void addNode(std::unique_ptr<Node> node);
 	int addNode(const NodeCreateArgs& nodeCreateArgs);
 	void removeNode(int id);
+	void addRequest(Request request);
+	void removeRequest(int index);
 	void draw(sf::RenderWindow& window);
 	void update(float deltaTime);
 	const std::vector<std::unique_ptr<Node>>& getNodesView();

@@ -1,6 +1,7 @@
 #include "editor.hpp"
 #include "../utils/logger.hpp"
 #include "../utils/file_util.hpp"
+#include "../utils/global_state.hpp"
 #include "../generic_drawables/point.hpp"
 #include "../math_utils/generic_math.hpp"
 #include "imgui-SFML.h"
@@ -21,6 +22,7 @@ Editor::Editor(sf::Vector2i screenSize, std::string applicationName)
 	: window(sf::VideoMode(screenSize.x, screenSize.y), applicationName) 
 {
     ImGui::SFML::Init(window);
+    window.setFramerateLimit(60);
 }
 
 // Destructor
@@ -56,7 +58,6 @@ void Editor::handleInput(NodeManager* nm) {
         }
     }
     
-
     // ------------------ Keyboard + text ------------------
     if (e.type == sf::Event::TextEntered && !io.WantCaptureKeyboard) {
         changeState(e.text.unicode, nm);
@@ -140,6 +141,7 @@ void Editor::editorLoop()
 
         // Update
         renderImguiSfml(window, deltaTime);
+        nm->update(deltaTime.asMilliseconds());
 
         // Clear window
         window.clear(sf::Color::Black);
@@ -175,6 +177,17 @@ void Editor::changeState(char stateChangeInput, NodeManager* nm) {
     currentSelectedNode = -1;
 
     setState(newState);
+
+    if (newState == EditorState::RUNNING_SIMULATION) {
+        if (GlobalState::getSimulationOn()) {
+            Logger::info(__FILE__, __LINE__, "Turning simulation off");
+            GlobalState::setSimulationOn(false);
+        }
+        else {
+            Logger::info(__FILE__, __LINE__, "Turning simulation on");
+            GlobalState::setSimulationOn(true);
+        }
+    }
 }
 
 void initializeDefaultEditorStateKeybinds(std::unordered_map<char, EditorState>& keybindMap) {

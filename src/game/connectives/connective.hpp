@@ -7,7 +7,6 @@ class Node;
 
 class Connective {
 private:
-	std::vector<std::unique_ptr<Request>> currentRequests;
 	bool active = true;
 	int requestsPassedThrough = 0;
 	float connectiveEndSideLength = 15.f;
@@ -37,7 +36,6 @@ public:
 	void move();
 	void incrementRequestsPassedThrough();
 	int getRequestsPassedThrough();
-	void addRequest(std::unique_ptr<Request> request);
 	std::pair<Node*, Node*> getNodeFromAndTo();
 	void setConnectiveColor(sf::Color color);
 };

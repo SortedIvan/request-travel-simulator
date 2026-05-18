@@ -1,13 +1,16 @@
 #include "node.hpp"
 #include "../../utils/logger.hpp"
+#include "../nodes/node_manager.hpp" 
+#include "../src/utils/global_state.hpp"
 
 Node::Node(int id, const NodeCreateArgs& nodeCreateArgs, sf::Font& nodeLabelFont,
-	sf::Color& nodeLabelFillColor) {
+	sf::Color& nodeLabelFillColor, NodeManager* nodeManager) {
 	this->id = id;
 	this->nodeType = nodeCreateArgs.nodeType;
 	this->nodeShape = Point(
 		nodeCreateArgs.position, nodeCreateArgs.nodeShapeSize, nodeCreateArgs.nodeColor
 	);
+	this->nodeManager = nodeManager;
 
 	const float nodeSelectedShapeSize = nodeCreateArgs.nodeShapeSize - nodeCreateArgs.nodeShapeSize / 10.f;
 
@@ -21,8 +24,8 @@ Node::Node(int id, const NodeCreateArgs& nodeCreateArgs, sf::Font& nodeLabelFont
 	setNodeLabel(nodeLabelFont, nodeLabelFillColor);
 }
 
-Node::Node(){
-
+Node::Node(NodeManager* nodeManager){
+	this->nodeManager = nodeManager;
 }
 
 void Node::draw(sf::RenderWindow& window) {
@@ -36,14 +39,6 @@ void Node::draw(sf::RenderWindow& window) {
 	if (isSelected) {
 		nodeSelectedShape.draw(window);
 	}
-}
-
-bool Node::hasRequests() {
-	return !requests.empty();
-}
-
-void Node::addRequest(std::unique_ptr<Request> request) {
-	this->requests.push_back(std::move(request));
 }
 
 Point Node::getNodeShape() {
@@ -70,10 +65,6 @@ std::vector<Connective>& Node::getNodeConnections() {
 	return this->nodeConnections;
 }
 
-std::vector<std::unique_ptr<Request>>& Node::getNodeRequests() {
-	return this->requests;
-}
-
 void Node::setNodeLabel(sf::Font& nodeLabelFont, const sf::Color& nodeLabelColor) {
 	if (this->nodeType == NodeType::NONE) {
 		return;
@@ -98,4 +89,37 @@ void Node::setIsSelected(bool isSelected) {
 
 bool Node::getIsSelected() {
 	return this->isSelected;
+}
+
+bool Node::checkCollisionWithinNode(sf::Vector2f point) {
+	auto nodeRadius = this->getNodeShape().getCircleShape().getRadius();
+	auto nodeCenter = this->getNodeShape().getCircleShape().getPosition();
+
+	auto xComponent = (point.x - nodeCenter.x) * (point.x - nodeCenter.x);
+	auto yComponent = (point.y - nodeCenter.y) * (point.y - nodeCenter.y);
+
+	return xComponent + yComponent <= nodeRadius * nodeRadius;
+}
+
+void Node::checkForRequestCollision() {
+	if (!GlobalState::getSimulationOn()) {
+		return;
+	}
+
+	auto& requests = nodeManager->getRequests();
+
+	for (auto it = requests.begin(); it != requests.end();) {
+		if ((*it)->getLastNodePassedThrough() == this->getId()) {
+			++it;
+			continue;
+		}
+
+		if (checkCollisionWithinNode((*it)->getPosition())) {
+			this->requests.push_back(std::move(*it));
+			it = requests.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 }

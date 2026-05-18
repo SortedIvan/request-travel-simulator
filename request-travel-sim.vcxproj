@@ -36,6 +36,7 @@
     <ClCompile Include="src\generic_drawables\line.cpp" />
     <ClCompile Include="src\generic_drawables\point.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\utils\global_state.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig-SFML.h" />
@@ -162,6 +163,8 @@
     <ClInclude Include="src\math_utils\generic_math.hpp" />
     <ClInclude Include="src\math_utils\geometry_math.hpp" />
     <ClInclude Include="src\math_utils\vec_math.hpp" />
+    <ClInclude Include="src\utils\global_state.hpp" />
+    <ClInclude Include="src\utils\logger.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
