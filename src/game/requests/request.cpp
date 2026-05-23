@@ -13,7 +13,7 @@ Request::Request() {
 Request::Request(const sf::Color color, const int width, const int length, const sf::Vector2f startingPosition,
 	sf::Vector2f destinationPosition, int lastNodePassedThrough) {
 	shape = sf::RectangleShape(sf::Vector2f(width, length));
-	shape.setPosition(startingPosition);
+	shape.setPosition(sf::Vector2f(startingPosition.x - (length / 2), startingPosition.y - (width / 2)));
 	shape.setFillColor(color);
 
 	this->destinationPosition = destinationPosition;

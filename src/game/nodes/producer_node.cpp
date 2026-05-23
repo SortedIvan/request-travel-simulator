@@ -2,30 +2,26 @@
 #include "node_manager.hpp"
 #include "../src/utils/global_state.hpp"
 #include "../src/utils/logger.hpp"
+#include <algorithm>
 
 void ProducerNode::update(float deltaTime) {
-
 	checkForRequestCollision();
-
-	if (!GlobalState::getSimulationOn()) {
-		return;
-	}
+	if (!GlobalState::getSimulationOn()) { return; }
 
 	if (nodeConnections.empty()) {
 		if (!requests.empty()) {
-			requests.clear();
+			clearRequests(requests);
 		}
 
 		return;
 	}
 
-
-	if (timeUntilProduction <= 0) {
-		timeUntilProduction = rateOfProductionMs;
-		produceSwitch = true;
+	if (timeUntilAction <= 0) {
+		timeUntilAction = rateOfActionMs;
+		actionSwitch = true;
 	}
 
-	if (produceSwitch) {
+	if (actionSwitch) {
 		if (connectiveIndex >= nodeConnections.size()) {
 			connectiveIndex = 0;
 		}
@@ -38,15 +34,12 @@ void ProducerNode::update(float deltaTime) {
 		);
 
 		connectiveIndex++;
-		produceSwitch = false;
+		actionSwitch = false;
 	}
 
-	timeUntilProduction -= deltaTime;
-	std::cout << timeUntilProduction << std::endl;
+	timeUntilAction -= deltaTime;
 	
 	if (!requests.empty()) {
-		requests.clear();
+		clearRequests(requests);
 	}
 }
-
-void ProducerNode::executeNodeBehavior(float deltaTime) {}

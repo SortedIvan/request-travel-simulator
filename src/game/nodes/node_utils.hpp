@@ -4,33 +4,30 @@
 enum NodeType {
 	NONE,
 	PRODUCER,
-	CONSUMER,
-	DISTRIBUTOR,
-	MULTIPLICATOR
+	SPLITTER,
+	MERGER
 };
 
 static inline const char* nodeTypeToString(NodeType& nt)
 {
     switch (nt)
     {
-		case NONE:       		return "None";
+		case NONE:       		return "NONE";
 		case PRODUCER:   		return "P";
-        case CONSUMER:   		return "C";
-		case DISTRIBUTOR: 		return "D";
-		case MULTIPLICATOR: 	return "M";
-        default:                return "None";
+		case SPLITTER: 			return "S";
+		case MERGER:			return "M";
+        default:                return "NONE";
     }
 }
 
 static inline const char* nodeTypeToStringFullName(NodeType& nt) {
 	switch (nt)
 	{
-		case NONE:       		return "None";
-		case PRODUCER:   		return "Producer";
-		case CONSUMER:   		return "Consumer";
-		case DISTRIBUTOR: 		return "Distrubutor";
-		case MULTIPLICATOR: 	return "Multiplicator";
-		default:                return "None";
+		case NONE:       		return "NONE";
+		case PRODUCER:   		return "PRODUCER";
+		case SPLITTER: 			return "SPLITTER";
+		case MERGER: 			return "MERGER";
+		default:                return "NONE";
 	}
 }
 

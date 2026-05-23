@@ -27,10 +27,11 @@
     <ClCompile Include="src\ecs\manager\ecs_manager.cpp" />
     <ClCompile Include="src\editor\editor.cpp" />
     <ClCompile Include="src\game\connectives\connective.cpp" />
-    <ClCompile Include="src\game\nodes\consumer_node.cpp" />
+    <ClCompile Include="src\game\nodes\merger_node.cpp" />
     <ClCompile Include="src\game\nodes\node.cpp" />
     <ClCompile Include="src\game\nodes\node_manager.cpp" />
     <ClCompile Include="src\game\nodes\producer_node.cpp" />
+    <ClCompile Include="src\game\nodes\splitter_node.cpp" />
     <ClCompile Include="src\game\requests\request.cpp" />
     <ClCompile Include="src\generic_drawables\dashed_line.cpp" />
     <ClCompile Include="src\generic_drawables\line.cpp" />

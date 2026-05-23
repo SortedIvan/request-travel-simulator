@@ -115,11 +115,16 @@ void Node::checkForRequestCollision() {
 		}
 
 		if (checkCollisionWithinNode((*it)->getPosition())) {
-			this->requests.push_back(std::move(*it));
+			this->requests.push(std::move(*it));
 			it = requests.erase(it);
 		}
 		else {
 			++it;
 		}
 	}
+}
+
+void Node::clearRequests(std::queue<std::unique_ptr<Request>>& requests) {
+	std::queue<std::unique_ptr<Request>> empty;
+	std::swap(requests, empty);
 }

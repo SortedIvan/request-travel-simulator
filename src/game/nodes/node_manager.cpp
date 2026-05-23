@@ -73,14 +73,11 @@ std::unique_ptr<Node> NodeManager::createNode(const NodeCreateArgs& nodeArgs) {
 	int id = getNodeId();
     switch (nodeArgs.nodeType)
     {
-        case NodeType::CONSUMER:
-            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
-
         case NodeType::PRODUCER:
             return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
 
         default:
-            return std::make_unique<ConsumerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
+			return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
     }
 }
 
