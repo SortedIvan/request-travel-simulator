@@ -70,6 +70,7 @@ public:
 class SplitterNode : public Node {
 private:
 	int numberOfConnectionsToSplitTo = 2; // Default to 2
+	int splitterConnectionIndex = 0; // start from the first connection
 
 public:
 	SplitterNode(int id, const NodeCreateArgs& args, sf::Font& font, sf::Color color, NodeManager* nodeManager)

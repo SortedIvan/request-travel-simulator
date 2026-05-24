@@ -75,7 +75,8 @@ std::unique_ptr<Node> NodeManager::createNode(const NodeCreateArgs& nodeArgs) {
     {
         case NodeType::PRODUCER:
             return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
-
+		case NodeType::SPLITTER:
+			return std::make_unique<SplitterNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
         default:
 			return std::make_unique<ProducerNode>(id, nodeArgs, nodeLabelFont, defaultNodeLabelFillColor, this);
     }

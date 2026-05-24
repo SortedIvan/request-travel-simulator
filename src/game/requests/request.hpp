@@ -21,4 +21,5 @@ public:
 	void move(const sf::Vector2f displacement);
 	void draw(sf::RenderWindow& window);
 	void update(float deltaTime);
+	sf::Color getColor();
 };

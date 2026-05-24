@@ -47,3 +47,7 @@ void Request::update(float deltaTime) {
 	const auto& yDisplacement = deltaTime * moveSpeed * direction.y;
 	shape.setPosition(sf::Vector2f(oldPos.x + xDisplacement, oldPos.y + yDisplacement));
 }
+
+sf::Color Request::getColor() {
+	return this->shape.getFillColor();
+}
