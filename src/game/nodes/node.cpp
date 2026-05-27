@@ -22,6 +22,18 @@ Node::Node(int id, const NodeCreateArgs& nodeCreateArgs, sf::Font& nodeLabelFont
 	this->nodeSelectedShape.getCircleShape().setOutlineThickness(2.f);
 
 	setNodeLabel(nodeLabelFont, nodeLabelFillColor);
+
+	this->nodeQueueSizeLabel.setFont(nodeLabelFont);
+	this->nodeQueueSizeLabel.setFillColor(sf::Color::White);
+	this->nodeQueueSizeLabel.setCharacterSize(nodeLabelSize);
+
+	const sf::Vector2f labelPosition = sf::Vector2f(
+		nodeShape.getPosition().x - (nodeQueueSizeLabel.getLocalBounds().width / 2) - 2,
+		(nodeShape.getPosition().y - (nodeQueueSizeLabel.getLocalBounds().height / 2)) + this->nodeSelectedShape.getCircleShape().getRadius() * 1.5f
+	);
+
+	this->nodeQueueSizeLabel.setPosition(labelPosition);
+
 }
 
 Node::Node(NodeManager* nodeManager){
@@ -38,6 +50,11 @@ void Node::draw(sf::RenderWindow& window) {
 
 	if (isSelected) {
 		nodeSelectedShape.draw(window);
+	}
+
+	if (drawNodeQueueSize) {
+		nodeQueueSizeLabel.setString(std::to_string(requests.size()));
+		window.draw(nodeQueueSizeLabel);
 	}
 }
 
@@ -69,7 +86,7 @@ void Node::setNodeLabel(sf::Font& nodeLabelFont, const sf::Color& nodeLabelColor
 	if (this->nodeType == NodeType::NONE) {
 		return;
 	}
-
+	
 	this->nodeLabel.setFont(nodeLabelFont);
 	this->nodeLabel.setFillColor(nodeLabelColor);
 	this->nodeLabel.setCharacterSize(nodeLabelSize);

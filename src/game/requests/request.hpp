@@ -8,7 +8,7 @@ private:
 	sf::Vector2f destinationPosition;
 	sf::Vector2f direction;
 	bool isMoving = false;
-	float moveSpeed = 0.5f;
+	float moveSpeed = 0.25f;
 	int lastNodePassedThrough;
 public:
 	Request();

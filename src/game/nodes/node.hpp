@@ -22,9 +22,12 @@ protected:
 	sf::Text nodeLabel;	
 	int requestsProcessed = 0;
 	int id;
-	const int nodeLabelSize = 15;
+	const int nodeLabelSize = 12;
 	bool isActive = true;
-	bool isSelected = false;	
+	bool isSelected = false;
+	bool drawNodeQueueSize = true;
+	sf::Text nodeQueueSizeLabel;
+	sf::Vector2f nodeQueueSizePosition;
 
 	// Every node has a set amount of time until it executes its behavior
 	float rateOfActionMs = 3000.f;
@@ -38,7 +41,7 @@ public:
 	Node(NodeManager* nodeManager);
 	Node(int id, const NodeCreateArgs& nodeCreateArgs,
 		sf::Font& nodeLabelFont, sf::Color& nodeLabelFillColor, NodeManager* nodeManager);
-	void draw(sf::RenderWindow& window);
+	virtual void draw(sf::RenderWindow& window);
 	Point getNodeShape();
 	int getId();
 	void setId(int newId);
@@ -63,6 +66,7 @@ public:
 	{
 		this->rateOfActionMs = GenericMath::getRandomFloat(1000.f, 2000.f);
 		this->actionSwitch = false;
+		drawNodeQueueSize = false;
 	}
     void update(float deltaTime) override;
 };
@@ -71,15 +75,37 @@ class SplitterNode : public Node {
 private:
 	int numberOfConnectionsToSplitTo = 2; // Default to 2
 	int splitterConnectionIndex = 0; // start from the first connection
-
 public:
 	SplitterNode(int id, const NodeCreateArgs& args, sf::Font& font, sf::Color color, NodeManager* nodeManager)
-		: Node(id, args, font, color, nodeManager) {}
+		: Node(id, args, font, color, nodeManager) 
+	{
+		rateOfActionMs = 200.f;
+	}
 	void update(float deltaTime) override;
 };
 
 class MergerNode : public Node {
 	MergerNode(int id, const NodeCreateArgs& args, sf::Font& font, sf::Color color, NodeManager* nodeManager)
+		: Node(id, args, font, color, nodeManager) {
+	}
+	void update(float deltaTime) override;
+};
+
+class ColorRandomizerNode : public Node {
+private:
+	int connectiveIndex = 0;
+public:
+	ColorRandomizerNode(int id, const NodeCreateArgs& args, sf::Font& font, sf::Color color, NodeManager* nodeManager)
+		: Node(id, args, font, color, nodeManager) {
+	}
+	void update(float deltaTime) override;
+};
+
+class VoidNode : public Node {
+private:
+	int connectiveIndex = 0;
+public:
+	VoidNode(int id, const NodeCreateArgs& args, sf::Font& font, sf::Color color, NodeManager* nodeManager)
 		: Node(id, args, font, color, nodeManager) {
 	}
 	void update(float deltaTime) override;

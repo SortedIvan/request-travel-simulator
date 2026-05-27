@@ -334,3 +334,4 @@ std::string Editor::editorStateToString(const EditorState& editorState) {
         return "NONE";
     }
 }
+

@@ -27,7 +27,6 @@ void SplitterNode::update(float deltaTime) {
 
 	std::size_t nodeConnectionsSize = getNodeConnections().size();
 	auto& requestToSplit = requests.front();
-	requests.pop();
 
 	if (nodeConnectionsSize <= numberOfConnectionsToSplitTo) {
 		
@@ -61,5 +60,6 @@ void SplitterNode::update(float deltaTime) {
 	}
 
 	actionSwitch = false;
+	requests.pop();
 }
 
